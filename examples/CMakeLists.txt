@@ -1,7 +1,7 @@
 function(add_example name)
   set(target_name ${name}_example)
   add_executable(${target_name} ${name}.c)
-  secp256k1_apply_internal_config(${target_name})
+  target_compile_options(${target_name} PRIVATE ${secp256k1_compile_options})
   target_include_directories(${target_name} PRIVATE
     ${PROJECT_SOURCE_DIR}/include
   )
