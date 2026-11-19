@@ -15,10 +15,10 @@ function(secp256k1_check_c_flags_internal flags output)
   set(${output} ${${result}} PARENT_SCOPE)
 endfunction()
 
-# Append flags to the COMPILE_OPTIONS directory property if CC accepts them.
+# Append flags to the secp256k1_compile_options variable if CC accepts them.
 macro(try_append_c_flags)
   secp256k1_check_c_flags_internal("${ARGV}" result)
   if(result)
-    add_compile_options(${ARGV})
+    list(APPEND secp256k1_compile_options ${ARGV})
   endif()
 endmacro()
