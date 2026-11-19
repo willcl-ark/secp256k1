@@ -58,6 +58,9 @@ add_library(secp256k1_precomputed OBJECT EXCLUDE_FROM_ALL
   precomputed_ecmult.c
   precomputed_ecmult_gen.c
 )
+secp256k1_apply_internal_config(secp256k1_precomputed)
+
+secp256k1_apply_internal_config(secp256k1)
 
 # Add objects explicitly rather than linking to the object libs to keep them
 # from being exported.
@@ -78,6 +81,7 @@ if(SECP256K1_ASM STREQUAL "arm32")
   target_sources(secp256k1_asm_arm PUBLIC
     asm/field_10x26_arm.s
   )
+  secp256k1_apply_internal_config(secp256k1_asm_arm)
   target_sources(secp256k1 PRIVATE $<TARGET_OBJECTS:secp256k1_asm_arm>)
   target_sources(secp256k1_objs INTERFACE $<TARGET_OBJECTS:secp256k1_asm_arm>)
   target_link_libraries(secp256k1_asm INTERFACE secp256k1_asm_arm)
@@ -112,10 +116,13 @@ set_libtool_abi_version(secp256k1
 
 if(SECP256K1_BUILD_BENCHMARK)
   add_executable(bench bench.c)
+  secp256k1_apply_internal_config(bench)
   target_link_libraries(bench secp256k1)
   add_executable(bench_internal bench_internal.c)
+  secp256k1_apply_internal_config(bench_internal)
   target_link_libraries(bench_internal secp256k1_precomputed secp256k1_asm)
   add_executable(bench_ecmult bench_ecmult.c)
+  secp256k1_apply_internal_config(bench_ecmult)
   target_link_libraries(bench_ecmult secp256k1_precomputed secp256k1_asm)
 endif()
 
@@ -132,6 +139,7 @@ if(SECP256K1_BUILD_TESTS)
 
   function(add_executable_and_tests exe_name verify_definition)
     add_executable(${exe_name} tests.c)
+    secp256k1_apply_internal_config(${exe_name})
     target_link_libraries(${exe_name} secp256k1_precomputed secp256k1_asm)
     target_compile_definitions(${exe_name} PRIVATE ${verify_definition} ${TEST_DEFINITIONS})
     include(DiscoverTests)
@@ -155,6 +163,7 @@ endif()
 if(SECP256K1_BUILD_EXHAUSTIVE_TESTS)
   # Note: do not include secp256k1_precomputed in exhaustive_tests (it uses runtime-generated tables).
   add_executable(exhaustive_tests tests_exhaustive.c)
+  secp256k1_apply_internal_config(exhaustive_tests)
   target_link_libraries(exhaustive_tests secp256k1_asm)
   target_compile_definitions(exhaustive_tests PRIVATE $<$<NOT:$<CONFIG:Coverage>>:VERIFY>)
   add_test(NAME secp256k1.exhaustive_tests COMMAND exhaustive_tests)
@@ -165,6 +174,7 @@ endif()
 
 if(SECP256K1_BUILD_CTIME_TESTS)
   add_executable(ctime_tests ctime_tests.c)
+  secp256k1_apply_internal_config(ctime_tests)
   target_link_libraries(ctime_tests secp256k1)
 endif()
 

@@ -31,6 +31,20 @@ set(${PROJECT_NAME}_LIB_VERSION_AGE 0)
 set(CMAKE_C_STANDARD 90)
 set(CMAKE_C_EXTENSIONS OFF)
 
+# Internal build configuration. Like directory properties, these variables
+# are inherited by subdirectories, which may extend them in their own scope.
+set(secp256k1_compile_definitions "")
+set(secp256k1_include_directories "")
+set(secp256k1_compile_options "")
+
+# Apply the internal build configuration to a target that compiles sources
+# of this project.
+function(secp256k1_apply_internal_config target)
+  target_compile_definitions(${target} PRIVATE ${secp256k1_compile_definitions})
+  target_include_directories(${target} PRIVATE ${secp256k1_include_directories})
+  target_compile_options(${target} PRIVATE ${secp256k1_compile_options})
+endfunction()
+
 #=============================
 # Configurable options
 #=============================
